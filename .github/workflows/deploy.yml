@@ -1,0 +1,30 @@
+name: Deploy Documentation
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+    - run: npm install
+    - run: npm run build
+
+    - name: Deploy to GitHub Pages
+      run: |
+        cd .vitepress/dist
+        echo 'docs.byalex.gg' > CNAME
+        git init
+        git add -A
+        git commit -m 'Deploy'
+        git push -f git@github.com:Developedbyalex/docs.git main:gh-pages
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
